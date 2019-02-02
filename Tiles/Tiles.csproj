@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <Folder Include="Output\" />
-    <Folder Include="V2\Read\" />
   </ItemGroup>
 
   <ItemGroup>

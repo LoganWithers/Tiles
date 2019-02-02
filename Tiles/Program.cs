@@ -13,6 +13,7 @@
     using Newtonsoft.Json;
 
     using V2;
+    using V2.Read;
     using V2.Seed;
     using V2.Write;
 
@@ -46,6 +47,12 @@
 
             var rightWall = new RightWall(settings);
             tiles.UnionWith(rightWall.Tiles);
+
+            var rightPreReaderRightCarry   = new PreReaderRight(settings, true);
+            tiles.UnionWith(rightPreReaderRightCarry.Tiles);
+
+            var rightPreReaderRightNoCarry = new PreReaderRight(settings, false);
+            tiles.UnionWith(rightPreReaderRightNoCarry.Tiles);
 
 
             var tileSetName = $"test";
