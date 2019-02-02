@@ -1,4 +1,4 @@
-﻿namespace Tiles.V2.Write {
+﻿namespace Tiles.V2 {
 
     public static class TileNames
     {
@@ -32,6 +32,14 @@
         public const string CopyStopperBottomRight  = "CopyStopperBottomRight";
 
 
+        public const string RightWallTopRightBottom = "RightWallTopRightBottom";
+        public const string RightWallTopRightMiddle = "RightWallTopRightMiddle";
+        public const string RightWallTopRightTopZ0  = "RightWallTopRightTopZ0 ";
+        public const string RightWallTopRightTopZ1  = "RightWallTopRightTopZ1 ";
+        public const string RightWallTopLeftBottom  = "RightWallTopLeftBottom ";
+        public const string RightWallTopLeftMiddle  = "RightWallTopLeftMiddle ";
+        public const string RightWallTopLeftTopZ0   = "RightWallTopLeftTopZ0  ";
+        public const string RightWallTopLeftTopZ1   = "RightWallTopLeftTopZ1  ";
 
     }
 

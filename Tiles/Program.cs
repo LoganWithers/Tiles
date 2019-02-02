@@ -5,10 +5,6 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Runtime.InteropServices.ComTypes;
-    using System.Security.Policy;
-
-    using Gadgets;
 
     using IO;
 
@@ -20,8 +16,7 @@
     using V2.Seed;
     using V2.Write;
 
-    using Hook = V2.Write.Hook;
-    using Writer = V2.Write.Writer;
+    using RightWall = V2.Seed.RightWall;
 
 
     internal class Program
@@ -31,12 +26,8 @@
         {
             const string stoppingValue = "1654545";
 
-            //for (var i = 2; i <= 36; i++)
-            //{
-                var settings = new CounterSettings(15, int.Parse(stoppingValue));
-                CreateTiles.Write(settings);
-            //}
-
+            var settings = new CounterSettings(3, int.Parse(stoppingValue));
+            CreateTiles.Write(settings);
   
         }
 
@@ -51,12 +42,13 @@
             Console.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
 
             var seed = new Seed(settings);
-
             tiles.UnionWith(seed.Tiles);
 
-            var tileSetName = $"test";
-            var names = new HashSet<string>();
+            var rightWall = new RightWall(settings);
+            tiles.UnionWith(rightWall.Tiles);
 
+
+            var tileSetName = $"test";
             var path = Utils.GetPath();
 
 

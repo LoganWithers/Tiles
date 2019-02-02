@@ -53,7 +53,7 @@
 
 
         private Glue SouthGlue { get; }
-        public Glue NorthGlue { get; set; }
+        public Glue NorthGlue { private get; set; }
 
 
         public IEnumerable<Tile> Tiles()
@@ -73,8 +73,6 @@
         public void AttachEast(Glue glue)
         {
             HookBottomRightUpperZ0.East = glue;
-            HookBottomRightUpperZ0.Color = "green";
-
         }
 
         private string Content      => $"V={binaryStringValue}, I=Hook, S={signal}";

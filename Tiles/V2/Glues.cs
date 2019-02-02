@@ -12,5 +12,10 @@
         public static Glue Reader(string signal)  => new Glue($"Reader: S={signal}");
 
         public static Glue Hook(string binaryValue, string signal) => new Glue($"Hook: {binaryValue}, S={signal}");
+
+        public static Glue RightWall => new Glue("RightWall 0");
+
+        public static Glue PreReadRight(string signal) => new Glue($"PreReadRight: S={signal}"); 
     }
+
 }

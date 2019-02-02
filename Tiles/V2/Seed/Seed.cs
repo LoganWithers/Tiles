@@ -16,15 +16,20 @@
 
         
         public readonly List<Tile> Tiles = new List<Tile>();
+        /// <summary>
+        /// Overall height, so the number of bits * 4 (4 tiles per bit), + one (to attach to hook)
+        /// </summary> 
+        private readonly int height;
 
-        private readonly int Height;
-
-        private readonly int Digits;
+        /// <summary>
+        /// Number of digits to create, # of 0s 
+        /// </summary>
+        private readonly int digits;
 
         public Seed(CounterSettings settings)
         {
-            Height = (settings.BitsRequiredToEncodeUpToBaseValueInBinary * 4) + 1;
-            Digits = settings.HorizontalDigitsPerRow;
+            height = settings.BitsRequiredToEncodeUpToBaseValueInBinary * 4 + 1;
+            digits = settings.HorizontalDigitsPerRow;
 
             SetUp();
 
@@ -36,6 +41,10 @@
         {
             CreateLeftWall();
 
+            foreach (var tile in Tiles)
+            {
+                tile.Color = "blue";
+            }
         }
 
         private Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}");
@@ -45,7 +54,7 @@
 
         private void CreateLeftWall()
         {
-            for (var i = 0; i < Height * 2; i++)
+            for (var i = 0; i < height * 2; i++)
             {
                 var tile = i == 0 ? new Tile("Seed") : Tile(i.ToString());
 
@@ -56,14 +65,14 @@
             var seed     = Tiles[0];
             seed.North = new Glue(previous.ToString());
 
-            for (var i = 1; i < Height; i++)
+            for (var i = 1; i < height; i++)
             {
                 var current = Tiles[i];
                 current.South = new Glue(previous.ToString());
 
                 previous = Guid.NewGuid();
 
-                var isTopCorner = i + 1 == Height;
+                var isTopCorner = i + 1 == height;
 
                 if (isTopCorner)
                 {
@@ -75,11 +84,11 @@
                 }
             }
 
-            for (var i = Height; i < Height * 2; i++)
+            for (var i = height; i < height * 2; i++)
             {
                 var current = Tiles[i];
 
-                var isTopCorner = i == Height;
+                var isTopCorner = i == height;
 
                 if (isTopCorner)
                 {
@@ -111,8 +120,7 @@
             right.West = middle.East;
             right.North = new Glue(Guid.NewGuid().ToString());
 
-            var previousGlue = Guid.NewGuid();
-            for (var i = 0; i < Digits; i++)
+            for (var i = 0; i < digits; i++)
             {
                 var digit = CreateDigits(i);
 
@@ -120,16 +128,26 @@
                 {
                     digit.RemoveAt(0);
                     digit[0].South = right.North;
+                } 
+                Tiles.AddRange(digit);
+
+                if (i + 1 == digits)
+                {
+                    Tiles.Add(new Tile("Seed End") {
+                        East = Glues.RightWall,
+                        West = new Glue($"Seed {i}")
+                    });
                 }
 
-                Tiles.AddRange(digit);
             }
         }
 
         private List<Tile> CreateDigits(int offset)
         {
-            var bitsPerDigit = (Height - 1) / 4;
+            var bitsPerDigit = (height - 1) / 4;
+
             var binary = string.Concat(Enumerable.Repeat("0", bitsPerDigit));
+
             var left = new Tile($"Seed {offset}, Left") {
                 West = new Glue($"Seed {offset - 1}"), 
                 East = new Glue($"Seed {offset}, Left -> Middle")
@@ -167,7 +185,7 @@
             }
 
 
-            var hook = new Hook($"Seed {offset}, Hook", Height - 1, true) {
+            var hook = new Hook($"Seed {offset}, Hook", height - 1, true) {
                 NorthGlue = new Glue(id.ToString())
             };
 
