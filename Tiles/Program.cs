@@ -5,10 +5,23 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Runtime.InteropServices.ComTypes;
+    using System.Security.Policy;
+
+    using Gadgets;
+
+    using IO;
 
     using Models;
 
     using Newtonsoft.Json;
+
+    using V2;
+    using V2.Seed;
+    using V2.Write;
+
+    using Hook = V2.Write.Hook;
+    using Writer = V2.Write.Writer;
 
 
     internal class Program
@@ -16,34 +29,15 @@
 
         public static void Main(string[] args)
         {
-            var input = " ";
+            const string stoppingValue = "1654545";
 
-            while (input != "-e" && !string.IsNullOrEmpty(input))
-            {
-                Console.WriteLine("Base?");
-
-                input =  Console.ReadLine();
-                //input = "4";
-
-                if (!int.TryParse(input, out var @base))
-                {
-                    continue;
-                }
-
-                Console.WriteLine("Stopping value?");
-                //input = "15";
-
-                input = Console.ReadLine();
-
-                var stoppingValue = int.Parse(input);
-
-                var settings = new CounterSettings(@base, stoppingValue);
+            //for (var i = 2; i <= 36; i++)
+            //{
+                var settings = new CounterSettings(15, int.Parse(stoppingValue));
                 CreateTiles.Write(settings);
-            }
+            //}
 
-            Console.WriteLine("exiting...");
-            // LeftWall LeftSide 9  => east = 9 -> 10 818bd6af-f2dd-44b9-ad78-31960ae929ac
-            // LeftWall RightSide 9 => west =
+  
         }
 
     }
@@ -52,29 +46,64 @@
     {
         public static void Write(CounterSettings settings)
         {
-            var digits = new List<Bit>();
+            var tiles = new HashSet<Tile>();
 
-            foreach (var binaryValue in settings.BinaryDigitPatterns)
-            {
-                digits.AddRange(BitStringEncoder.Encode(binaryValue));
-            }
-
-            var tiles = new List<Tile>();
             Console.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
 
-            var seedTiles = new SeedRow(settings).Tiles();
-            var rightWall = new RightWall(settings).Tiles();
+            var seed = new Seed(settings);
 
-            tiles.AddRange(seedTiles);
-            tiles.AddRange(rightWall);
+            tiles.UnionWith(seed.Tiles);
 
-
-            var tileSetName = $"base-{settings.BaseK}-counter";
-            var options = new TdpOptions(tileSetName, "LeftWallLeftSide");
-
+            var tileSetName = $"test";
+            var names = new HashSet<string>();
 
             var path = Utils.GetPath();
 
+
+            //foreach (var binaryString in settings.BinaryDigitPatterns)
+            //{
+
+            //    for (var i = binaryString.Length; i > 0; i--)
+            //    {
+            //        var carry = binaryString.Contains('0');
+
+            //        var value = binaryString[i - 1];
+            //        var bit   = value == '0' ? (AbstractBit)new ZeroBit(binaryString, i - 1, Modes.Increment, carry) : 
+            //                                                new OneBit(binaryString, i - 1, Modes.Increment, carry);
+
+            //        var signal = carry ? Signals.Carry : Signals.NoCarry;
+            //        bit.SouthGlue = new Glue($"{previous.ToString()}, {signal}");
+            //        // bit.NorthGlue 
+            //        previous      = Guid.NewGuid();
+
+
+
+            //        tiles.UnionWith(bit.Tiles());
+            //    }
+
+            //    var incremented = Convert.ToString(Convert.ToInt32(binaryString, 2) + 1, 2);
+
+            //    var newBinary   = incremented.PadLeft(Math.Abs(incremented.Length - binaryString.Length) + incremented.Length, '0');
+            //    var noCarryHoke = new Hook(newBinary, binaryString.Length * 4, false);
+
+            //    var carryHook = new Hook(newBinary, binaryString.Length * 4, true);
+
+            //    tiles.UnionWith(noCarryHoke.Tiles());
+            //    tiles.UnionWith(carryHook.Tiles());
+
+            //    var writerCarry   = new Writer(newBinary,    Signals.NoCarry);
+            //    var writerNoCarry = new Writer(binaryString, Signals.NoCarry);
+            //    tiles.UnionWith(writerCarry.Tiles());
+            //    tiles.UnionWith(writerNoCarry.Tiles());
+            //}
+            
+
+            
+
+            tiles.UnionWith(GetAllGadgets());
+
+
+            var options = new TdpOptions(tileSetName, seed.Start.Name);
             WriteOptions($"{path}{tileSetName}.tdp", options);
 
             WriteDefinitions($"{path}{tileSetName}.tds", tiles);
@@ -90,6 +119,16 @@
         {
             File.WriteAllText(path, string.Join("\n", tiles.Select(t => t.ToString())));
             Console.WriteLine($".tds file can be found at {path}");
+        }
+
+
+        private static IEnumerable<Tile> GetAllGadgets()
+        {
+            var copyStopperCarry   = new CopyStopper(Signals.Carry);
+            var copyStopperNoCarry = new CopyStopper(Signals.NoCarry);
+
+            
+            return copyStopperNoCarry.Tiles().Concat(copyStopperCarry.Tiles());
         }
     }
 }

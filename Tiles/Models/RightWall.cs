@@ -98,7 +98,7 @@
 
             side = "LeftSide";
 
-            for (var j = 0; j < height; j++, i++)
+            for (var j = 0; j < height - 1; j++, i++)
             {
                 var tile = new Tile(Name(i))
                 {
@@ -106,7 +106,7 @@
                     South = BindIndexes(i, i + 1)
                 };
 
-                if (j + 1 == height)
+                if (j + 1 == height - 1)
                 {
                     tile.South = new Glue();
                     tile.West = Glues.ReaderCarry;

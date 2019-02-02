@@ -1,4 +1,4 @@
-﻿namespace Tiles.Models
+﻿namespace Tiles.IO
 {
 
     using System;
