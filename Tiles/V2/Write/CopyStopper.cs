@@ -49,7 +49,7 @@
             BottomLeft.East  = Bind(BottomLeft, BottomRight);
             BottomRight.West = BottomLeft.East;
 
-            BottomRight.South = Glues.Reader(signal);
+            BottomRight.South = Glues.PreReadRight(signal);
             tiles             = new List<Tile> {TopRight, TopLeft, BottomLeft, BottomRight};
         }
 

@@ -18,6 +18,7 @@
     using V2.Write;
 
     using RightWall = V2.Seed.RightWall;
+    using Writer = V2.Write.Writer;
 
 
     internal class Program
@@ -58,54 +59,84 @@
             var tileSetName = $"test";
             var path = Utils.GetPath();
 
+            var readerTiles = AddReaders(settings.BinaryDigitPatterns);
+            tiles.UnionWith(readerTiles);
 
-            //foreach (var binaryString in settings.BinaryDigitPatterns)
-            //{
+            var hookTiles = AddHooks(settings.BinaryDigitPatterns);
+            tiles.UnionWith(hookTiles);
 
-            //    for (var i = binaryString.Length; i > 0; i--)
-            //    {
-            //        var carry = binaryString.Contains('0');
-
-            //        var value = binaryString[i - 1];
-            //        var bit   = value == '0' ? (AbstractBit)new ZeroBit(binaryString, i - 1, Modes.Increment, carry) : 
-            //                                                new OneBit(binaryString, i - 1, Modes.Increment, carry);
-
-            //        var signal = carry ? Signals.Carry : Signals.NoCarry;
-            //        bit.SouthGlue = new Glue($"{previous.ToString()}, {signal}");
-            //        // bit.NorthGlue 
-            //        previous      = Guid.NewGuid();
-
-
-
-            //        tiles.UnionWith(bit.Tiles());
-            //    }
-
-            //    var incremented = Convert.ToString(Convert.ToInt32(binaryString, 2) + 1, 2);
-
-            //    var newBinary   = incremented.PadLeft(Math.Abs(incremented.Length - binaryString.Length) + incremented.Length, '0');
-            //    var noCarryHoke = new Hook(newBinary, binaryString.Length * 4, false);
-
-            //    var carryHook = new Hook(newBinary, binaryString.Length * 4, true);
-
-            //    tiles.UnionWith(noCarryHoke.Tiles());
-            //    tiles.UnionWith(carryHook.Tiles());
-
-            //    var writerCarry   = new Writer(newBinary,    Signals.NoCarry);
-            //    var writerNoCarry = new Writer(binaryString, Signals.NoCarry);
-            //    tiles.UnionWith(writerCarry.Tiles());
-            //    tiles.UnionWith(writerNoCarry.Tiles());
-            //}
-            
-
-            
-
+            var writerTiles = AddWriters(settings.BinaryDigitPatterns);
+            tiles.UnionWith(writerTiles);
             tiles.UnionWith(GetAllGadgets());
-
 
             var options = new TdpOptions(tileSetName, seed.Start.Name);
             WriteOptions($"{path}{tileSetName}.tdp", options);
 
             WriteDefinitions($"{path}{tileSetName}.tds", tiles);
+        }
+
+        private static IEnumerable<Tile> AddHooks(IEnumerable<string> binaryStrings)
+        {
+            var results = new List<Tile>();
+
+            IEnumerable<string> encodedDigits = binaryStrings.ToList();
+
+            foreach (var shouldCarry in new[] { true, false })
+            {
+                foreach (var binaryString in encodedDigits)
+                {
+                    var hook = new Hook(binaryString, binaryString.Length * 4, shouldCarry);
+
+                    results.AddRange(hook.Tiles());
+                }
+            }
+
+            return results;
+        }
+
+        private static IEnumerable<Tile> AddReaders(IEnumerable<string> binaryStrings)
+        {
+            var results = new List<Tile>();
+
+            IEnumerable<string> encodedDigits = binaryStrings.ToList();
+
+            foreach (var signal in new[] {Signals.Carry, Signals.NoCarry})
+            {
+                foreach (var binaryString in encodedDigits)
+                {
+                    for (var i = 0; i < binaryString.Length; i++)
+                    {
+                        var information = binaryString.Substring(0, i);
+
+                        var reader = new Reader(information, signal, binaryString.Length);
+
+                        results.AddRange(reader.Tiles());
+                    }
+                }
+            }
+            return results;
+        }
+
+
+        private static IEnumerable<Tile> AddWriters(IEnumerable<string> binaryStrings)
+        {
+            var results = new List<Tile>();
+
+            IEnumerable<string> encodedDigits = binaryStrings.ToList();
+
+            foreach (var signal in new[] { Signals.Carry, Signals.NoCarry })
+            {
+                foreach (var binaryString in encodedDigits)
+                {
+                   
+
+                        var reader = new Writer(binaryString, signal);
+
+                        results.AddRange(reader.Tiles());
+                    
+                }
+            }
+            return results;
         }
 
         private static void WriteOptions(string path, TdpOptions options)
