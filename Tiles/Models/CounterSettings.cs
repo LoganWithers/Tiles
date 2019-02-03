@@ -18,7 +18,7 @@
         public string LastRowInBaseK { get; }
         public int LowestPowerOfTwoGreaterThanBaseK { get; }
 
-        public CounterSettings(int baseK, long stoppingValue = 10, int startingValue = 0)
+        public CounterSettings(int baseK, long stoppingValue = 10)
         {
             BaseK                                      = baseK;
             StoppingValue                              = stoppingValue;
@@ -38,18 +38,18 @@
             var uniqueBitPatterns = new HashSet<string>();
 
             Console.WriteLine("-------------------------");
-            Console.WriteLine(" Value     |  Binary    |");
+            Console.WriteLine("| Digit     |  Binary    |");
             Console.WriteLine("-------------------------");
 
             for (var i = 0; i < BaseK; i++)
             {
                 var paddedBinaryValue = Convert.ToString(i, 2).PadLeft(BitsRequiredToEncodeUpToBaseValueInBinary, '0');
                 uniqueBitPatterns.Add(paddedBinaryValue);
-                Console.WriteLine("{0,-10} | {1,-10} |", i, paddedBinaryValue);
+                Console.WriteLine("| {0,-10} | {1,-10} |", i, paddedBinaryValue);
             }
 
             Console.WriteLine("-------------------------\n\n\n");
-
+            Console.WriteLine("The binary values will be encoded with the most significant bit being the top most bit");
             return uniqueBitPatterns;
         }
 

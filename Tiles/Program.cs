@@ -2,207 +2,61 @@
 {
 
     using System;
-    using System.Collections.Generic;
-    using System.IO;
-    using System.Linq;
-
-    using IO;
 
     using Models;
-
-    using Newtonsoft.Json;
-
-    using V2;
-    using V2.Read;
-    using V2.Seed;
-    using V2.Write;
-
-    using RightWall = V2.Seed.RightWall;
-    using Writer = V2.Write.Writer;
-
 
     internal class Program
     {
 
         public static void Main(string[] args)
         {
-            const string stoppingValue = "1565";
+            while (true)
+            {
+                Console.WriteLine("Base value?");
+                var input = Console.ReadLine();
 
-            var settings = new CounterSettings(6, int.Parse(stoppingValue));
-            CreateTiles.Write(settings);
-  
+                bool IsExitCommand() => input == "-e" || string.IsNullOrEmpty(input);
+                
+                if (int.TryParse(input, out var baseK) && baseK >= 2 && baseK <= 36)
+                {
+                    Console.WriteLine("Stopping value?");
+                    input = Console.ReadLine();
+
+                    if (int.TryParse(input, out var stoppingValue))
+                    {
+                        var settings = new CounterSettings(baseK, stoppingValue);
+                        TileGenerator.Write(settings);
+                        continue;
+                    }
+
+                    if (IsExitCommand())
+                    {
+                        break;
+                    }
+
+                    Error($"Error parsing {input}... make sure the stopping value is a number");
+                    continue;
+                }
+
+                if (IsExitCommand())
+                {
+                    break;
+                }
+
+                Error($"Error parsing {input}... make sure the base is a number between 2 and 36.");
+
+            }
+
         }
 
+
+        private static void Error(string message)
+        {
+            var defaultColor = Console.ForegroundColor;
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(message);
+            Console.ForegroundColor = defaultColor;
+        }
     }
 
-    public static class CreateTiles
-    {
-        public static void Write(CounterSettings settings)
-        {
-            var tiles = new HashSet<Tile>();
-
-            Console.WriteLine(JsonConvert.SerializeObject(settings, Formatting.Indented));
-
-            var seed = new Seed(settings);
-            tiles.UnionWith(seed.Tiles);
-
-            var rightWall = new RightWall(settings);
-            tiles.UnionWith(rightWall.Tiles);
-
-            var leftWall = new LeftWall(settings);
-            tiles.UnionWith(leftWall.Tiles);
-
-
-            var rightPreReaderRightCarry   = new PreReaderRight(settings, true);
-            tiles.UnionWith(rightPreReaderRightCarry.Tiles);
-
-            var rightPreReaderRightNoCarry = new PreReaderRight(settings, false);
-            tiles.UnionWith(rightPreReaderRightNoCarry.Tiles);
-
-            var leftPreReaderFirst = new PreReaderLeft(settings, true);
-            tiles.UnionWith(leftPreReaderFirst.Tiles);
-
-
-            var leftPreReaderNth = new PreReaderLeft(settings, false);
-            tiles.UnionWith(leftPreReaderNth.Tiles);
-
-
-            var readerTiles = AddReaders(settings.BinaryDigitPatterns);
-            tiles.UnionWith(readerTiles);
-
-            var hookTiles = AddHooks(settings.BinaryDigitPatterns);
-            tiles.UnionWith(hookTiles);
-
-            var writerTiles = AddWriters(settings.BinaryDigitPatterns);
-            tiles.UnionWith(writerTiles);
-
-            tiles.UnionWith(GetAllGadgets());
-
-            var tileSetName = $"test";
-            var options = new TdpOptions(tileSetName, seed.Start.Name);
-
-            var path = Utils.GetPath();
-
-            WriteOptions($"{path}{tileSetName}.tdp", options);
-
-            WriteDefinitions($"{path}{tileSetName}.tds", tiles);
-        }
-
-        private static IEnumerable<Tile> AddHooks(IEnumerable<string> binaryStrings)
-        {
-            var results = new List<Tile>();
-
-            IEnumerable<string> encodedDigits = binaryStrings.ToList();
-
-            foreach (var shouldCarry in new[] { true, false })
-            {
-                foreach (var binaryString in encodedDigits)
-                {
-                    var hook = new RightHook(binaryString, binaryString.Length * 4, shouldCarry);
-
-                    results.AddRange(hook.Tiles());
-                }
-            }
-
-            return results;
-        }
-
-        
-        private static IEnumerable<Tile> AddReaders(IEnumerable<string> binaryStrings)
-        {
-            var results = new List<Tile>();
-
-            IEnumerable<string> encodedDigits = binaryStrings.ToList();
-
-            foreach (var signal in new[] {Signals.Carry, Signals.NoCarry})
-            {
-                foreach (var binaryString in encodedDigits)
-                {
-                    for (var i = 0; i < binaryString.Length; i++)
-                    {
-                        var information = binaryString.Substring(0, i);
-
-                        var reader = new RightReader(information, signal, binaryString.Length);
-
-                        results.AddRange(reader.Tiles());
-                    }
-                }
-            }
-
-            foreach (var signal in new[] { Signals.First, Signals.Nth })
-            {
-                foreach (var binaryString in encodedDigits)
-                {
-                    for (var i = 0; i < binaryString.Length; i++)
-                    {
-                        var information = binaryString.Substring(0, i);
-
-                        var reader = new LeftReader(information, signal, binaryString.Length);
-
-                        results.AddRange(reader.Tiles());
-                    }
-                }
-            }
-
-
-            return results;
-        }
-
-
-        private static IEnumerable<Tile> AddWriters(IEnumerable<string> binaryStrings)
-        {
-            var results = new List<Tile>();
-
-            IEnumerable<string> encodedDigits = binaryStrings.ToList();
-
-            foreach (var signal in new[] { Signals.Carry, Signals.NoCarry })
-            {
-                foreach (var binaryString in encodedDigits)
-                {
-                   var writer = new Writer(binaryString, signal);
-
-                   results.AddRange(writer.Tiles());
-                    
-                }
-            }
-
-            foreach (var signal in new[] { Signals.First, Signals.Nth })
-            {
-                foreach (var binaryString in encodedDigits)
-                {
-                    var copier = new Copier(binaryString, signal);
-
-                    var tiles = copier.Tiles().ToList();
-
-                    results.AddRange(tiles);
-                    var incrementStopper = new IncrementStopper(binaryString, signal);
-                    results.AddRange(incrementStopper.Tiles());
-                }
-            }
-
-            return results;
-        }
-
-        private static void WriteOptions(string path, TdpOptions options)
-        {
-            File.WriteAllText(path, options.ToString());
-            Console.WriteLine($".tdp file can be found at {path}");
-        }
-
-        private static void WriteDefinitions(string path, IEnumerable<Tile> tiles)
-        {
-            File.WriteAllText(path, string.Join("\n", tiles.Select(t => t.ToString())));
-            Console.WriteLine($".tds file can be found at {path}");
-        }
-
-
-        private static IEnumerable<Tile> GetAllGadgets()
-        {
-            var copyStopperCarry   = new CopyStopper(Signals.Carry);
-            var copyStopperNoCarry = new CopyStopper(Signals.NoCarry);
-
-            
-            return copyStopperNoCarry.Tiles().Concat(copyStopperCarry.Tiles());
-        }
-    }
 }

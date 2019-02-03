@@ -8,11 +8,11 @@
     {
         public Tile(string name)
         {
-            this.Name = name;
+            Name = name;
             Glues = new List<Glue> {North, South, East, West, Up, Down};
         }
 
-        public string Name { get; set;  }
+        public string Name { get; }
 
         public List<Glue> Glues { get;  }
         public string Label { get; set; } = string.Empty;

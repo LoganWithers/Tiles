@@ -13,12 +13,6 @@
             Coordinates = new Coordinates();
         }
 
-        public TdpOptions(string tdsFileName, string seedName, Coordinates coordinates)
-        {
-            TdsFileName = tdsFileName;
-            SeedName    = seedName;
-            Coordinates = coordinates;
-        }
 
         public string TdsFileName { get; }
 
