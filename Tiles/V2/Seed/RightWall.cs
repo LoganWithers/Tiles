@@ -78,8 +78,13 @@
 
         }
 
-        Tile Tile(string name)    => new Tile(name);
-        Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}");
-        Glue G(Guid id) => new Glue(id.ToString());
+
+        private Tile Tile(string name)    => new Tile(name);
+
+
+        private Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}");
+
+
+        private Glue G(Guid id) => new Glue(id.ToString());
     }
 }

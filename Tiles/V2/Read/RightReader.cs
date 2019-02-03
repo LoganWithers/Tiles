@@ -151,13 +151,13 @@
         }
 
 
-        Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}, {BitsRead}, S={Signal} ");
+        private Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}, {BitsRead}, S={Signal} ");
 
 
-        Tile Tile(string name) => new Tile(name);
+        private Tile Tile(string name) => new Tile(name);
 
 
-        string IncrementInBinary(string currentValue)
+        private string IncrementInBinary(string currentValue)
         {
 
             var value = Convert.ToInt32(currentValue, 2);

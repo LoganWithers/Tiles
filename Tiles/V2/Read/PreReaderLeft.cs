@@ -63,11 +63,7 @@
 
             tiles.Add(leftZ1);
             tiles.Add(rightZ1);
-
-            foreach (var tile in tiles)
-            {
-                tile.Color = "green";
-            }
+            
         }
 
 

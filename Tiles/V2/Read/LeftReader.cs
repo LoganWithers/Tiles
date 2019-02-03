@@ -122,31 +122,9 @@
         }
 
 
-        Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}, {BitsRead}, S={Signal} ");
+        private Glue Bind(Tile a, Tile b) => new Glue($"{a.Name} -> {b.Name}, {BitsRead}, S={Signal} ");
 
 
-        Tile Tile(string name) => new Tile(name);
-
-
-        string IncrementInBinary(string currentValue)
-        {
-
-            var value = Convert.ToInt32(currentValue, 2);
-
-            var incremented = value + 1;
-
-            var incrementedInBinary = Convert.ToString(incremented, 2);
-
-            if (incrementedInBinary.Length == currentValue.Length)
-            {
-                return incrementedInBinary;
-            }
-
-            var droppedZeroes = currentValue.Length - incrementedInBinary.Length;
-
-            var result = incrementedInBinary.PadLeft(droppedZeroes + incrementedInBinary.Length, '0');
-            return result;
-
-        }
+        private Tile Tile(string name) => new Tile(name);
     }
 }

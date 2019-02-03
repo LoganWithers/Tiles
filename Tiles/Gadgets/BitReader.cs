@@ -129,13 +129,16 @@
         }
 
 
-        string BitResult(int testNumber, int testedBitValue) => $"BitReader Test: {testNumber} {signal} = {testedBitValue}";
+        private string BitResult(int testNumber, int testedBitValue) => $"BitReader Test: {testNumber} {signal} = {testedBitValue}";
 
-        string Name(string value) => $"BitReader {value} {signal}";
 
-        const string Init = "Index";
+        private string Name(string value) => $"BitReader {value} {signal}";
 
-        string Bind(string a, string b) => $"BitReader {a} {signal} -> {b} {signal}";
+
+        private const string Init = "Index";
+
+
+        private string Bind(string a, string b) => $"BitReader {a} {signal} -> {b} {signal}";
     }
 
     public class RightToLeftBitTest
