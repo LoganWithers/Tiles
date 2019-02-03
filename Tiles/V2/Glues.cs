@@ -3,8 +3,6 @@
 
     using Models;
 
-    using Seed;
-
     public static class Glues
     {
 

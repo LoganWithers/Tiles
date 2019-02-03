@@ -5,8 +5,6 @@
 
     using Models;
 
-    using Newtonsoft.Json;
-
     public class IncrementStopper
     {
 
