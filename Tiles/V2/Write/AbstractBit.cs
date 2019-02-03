@@ -29,12 +29,12 @@
         private readonly string mode;
 
         private string Value;
-        protected AbstractBit(string binaryStringValue, int index, string mode, bool carry)
+        protected AbstractBit(string binaryStringValue, int index, string mode, string signal)
         {
             this.index             = index;
             this.binaryStringValue = binaryStringValue;
             this.mode              = mode;
-            signal                 = carry ? Signals.Carry : Signals.NoCarry;
+            this.signal            = signal;
 
             UpperOuter             = Tile(TileNames.UpperOuter);
             UpperInner             = Tile(TileNames.UpperInner);
@@ -49,6 +49,8 @@
 
         }
 
+
+        public void SetNorth(string color) => UpperOuter.Color = color;
 
         protected Glue Bind(Tile tileA, Tile tileB) => new Glue($"{tileA.Name} -> {tileB.Name}, S={signal}");
         

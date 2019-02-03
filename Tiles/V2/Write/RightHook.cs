@@ -6,7 +6,7 @@
 
     using Models;
 
-    public class Hook
+    public class RightHook
     {
 
         private readonly string binaryStringValue;
@@ -42,7 +42,7 @@
         private Tile HookTopRightZ1;
 
 
-        public Hook(string binaryStringValue, int height, bool carry)
+        public RightHook(string binaryStringValue, int height, bool carry)
         {
             Height                 = height;
             this.binaryStringValue = binaryStringValue;

@@ -41,6 +41,13 @@
         public const string RightWallTopLeftTopZ0   = "RightWallTopLeftTopZ0  ";
         public const string RightWallTopLeftTopZ1   = "RightWallTopLeftTopZ1  ";
 
+
+        public const string LeftWallBottomRightZ0 = "LeftWallBottomRightZ0";
+        public const string LeftWallBottomRightZ1 = "LeftWallBottomRightZ1";
+        public const string LeftWallBottomMiddle  = "LeftWallBottomMiddle";
+        public const string LeftWallTopMiddle     = "LeftWallTopMiddle";
+        public const string LeftWallTopLeft       = "LeftWallTopLeft";
+        
     }
 
 }

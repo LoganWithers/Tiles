@@ -26,9 +26,9 @@
 
         public static void Main(string[] args)
         {
-            const string stoppingValue = "1654545";
+            const string stoppingValue = "1565";
 
-            var settings = new CounterSettings(3, int.Parse(stoppingValue));
+            var settings = new CounterSettings(6, int.Parse(stoppingValue));
             CreateTiles.Write(settings);
   
         }
@@ -49,15 +49,23 @@
             var rightWall = new RightWall(settings);
             tiles.UnionWith(rightWall.Tiles);
 
+            var leftWall = new LeftWall(settings);
+            tiles.UnionWith(leftWall.Tiles);
+
+
             var rightPreReaderRightCarry   = new PreReaderRight(settings, true);
             tiles.UnionWith(rightPreReaderRightCarry.Tiles);
 
             var rightPreReaderRightNoCarry = new PreReaderRight(settings, false);
             tiles.UnionWith(rightPreReaderRightNoCarry.Tiles);
 
+            var leftPreReaderFirst = new PreReaderLeft(settings, true);
+            tiles.UnionWith(leftPreReaderFirst.Tiles);
 
-            var tileSetName = $"test";
-            var path = Utils.GetPath();
+
+            var leftPreReaderNth = new PreReaderLeft(settings, false);
+            tiles.UnionWith(leftPreReaderNth.Tiles);
+
 
             var readerTiles = AddReaders(settings.BinaryDigitPatterns);
             tiles.UnionWith(readerTiles);
@@ -67,9 +75,14 @@
 
             var writerTiles = AddWriters(settings.BinaryDigitPatterns);
             tiles.UnionWith(writerTiles);
+
             tiles.UnionWith(GetAllGadgets());
 
+            var tileSetName = $"test";
             var options = new TdpOptions(tileSetName, seed.Start.Name);
+
+            var path = Utils.GetPath();
+
             WriteOptions($"{path}{tileSetName}.tdp", options);
 
             WriteDefinitions($"{path}{tileSetName}.tds", tiles);
@@ -85,7 +98,7 @@
             {
                 foreach (var binaryString in encodedDigits)
                 {
-                    var hook = new Hook(binaryString, binaryString.Length * 4, shouldCarry);
+                    var hook = new RightHook(binaryString, binaryString.Length * 4, shouldCarry);
 
                     results.AddRange(hook.Tiles());
                 }
@@ -94,6 +107,7 @@
             return results;
         }
 
+        
         private static IEnumerable<Tile> AddReaders(IEnumerable<string> binaryStrings)
         {
             var results = new List<Tile>();
@@ -108,12 +122,29 @@
                     {
                         var information = binaryString.Substring(0, i);
 
-                        var reader = new Reader(information, signal, binaryString.Length);
+                        var reader = new RightReader(information, signal, binaryString.Length);
 
                         results.AddRange(reader.Tiles());
                     }
                 }
             }
+
+            foreach (var signal in new[] { Signals.First, Signals.Nth })
+            {
+                foreach (var binaryString in encodedDigits)
+                {
+                    for (var i = 0; i < binaryString.Length; i++)
+                    {
+                        var information = binaryString.Substring(0, i);
+
+                        var reader = new LeftReader(information, signal, binaryString.Length);
+
+                        results.AddRange(reader.Tiles());
+                    }
+                }
+            }
+
+
             return results;
         }
 
@@ -128,14 +159,27 @@
             {
                 foreach (var binaryString in encodedDigits)
                 {
-                   
+                   var writer = new Writer(binaryString, signal);
 
-                        var reader = new Writer(binaryString, signal);
-
-                        results.AddRange(reader.Tiles());
+                   results.AddRange(writer.Tiles());
                     
                 }
             }
+
+            foreach (var signal in new[] { Signals.First, Signals.Nth })
+            {
+                foreach (var binaryString in encodedDigits)
+                {
+                    var copier = new Copier(binaryString, signal);
+
+                    var tiles = copier.Tiles().ToList();
+
+                    results.AddRange(tiles);
+                    var incrementStopper = new IncrementStopper(binaryString, signal);
+                    results.AddRange(incrementStopper.Tiles());
+                }
+            }
+
             return results;
         }
 

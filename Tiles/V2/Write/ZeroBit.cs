@@ -8,8 +8,7 @@
 
     public class ZeroBit : AbstractBit {
 
-
-        public ZeroBit(string binaryStringValue, int index, string direction, bool carry = true) : base(binaryStringValue, index, direction, carry) { }
+        public ZeroBit(string binaryStringValue, int index, string direction, string signal) : base(binaryStringValue, index, direction, signal) { }
 
 
         private void SetGlues()

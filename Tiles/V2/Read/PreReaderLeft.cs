@@ -6,23 +6,23 @@
 
     using Models;
 
-    public class PreReaderRight
+    public class PreReaderLeft
     {
 
         private readonly int height;
 
         private readonly List<Tile> tiles;
 
-        private const string GadgetName = "PreReaderRight";
+        private const string GadgetName = "PreReaderLeft";
         public IEnumerable<Tile> Tiles => tiles;
 
 
         private readonly string signal;
-        public PreReaderRight(CounterSettings settings, bool carry)
+        public PreReaderLeft(CounterSettings settings, bool isFirst)
         {
             height = settings.BitsRequiredToEncodeUpToBaseValueInBinary * 4;
             tiles = new List<Tile>();
-            signal = carry ? Signals.Carry : Signals.NoCarry;
+            signal = isFirst ? Signals.First : Signals.Nth;
             SetUp();
         }
 
@@ -35,14 +35,13 @@
             {
                 var tile = Tile(i);
 
-                tile.North = i == 0 ? Glues.PreReadRight(signal) : G(id);
+                tile.North = i == 0 ? Glues.PreReadLeft(signal) : G(id);
 
                 id = Guid.NewGuid();
 
                 if (i + 1 == height)
                 {
-                    tile.West = G(id);
-                    tile.South = Glues.LeftWall;
+                    tile.Up = G(id);
                 } else
                 {
                     tile.South = G(id);
@@ -51,18 +50,24 @@
                 tiles.Add(tile);
             }
 
-            var right = Tile(height);
-            right.East = G(id);
+            var leftZ1  = Tile(height);
+            leftZ1.Down = G(id);
             id = Guid.NewGuid();
-            right.West = G(id);
-            tiles.Add(right);
 
-            var left = Tile(height + 1);
-            left.East = right.West;
+            leftZ1.East = G(id); 
 
-            left.West = Glues.Reader(signal);
+            var rightZ1 = Tile(height + 1);
+            rightZ1.West = leftZ1.East;
+            rightZ1.East = Glues.Reader(signal);
+            rightZ1.Color = "red";
 
-            tiles.Add(left);
+            tiles.Add(leftZ1);
+            tiles.Add(rightZ1);
+
+            foreach (var tile in tiles)
+            {
+                tile.Color = "green";
+            }
         }
 
 

@@ -1,4 +1,4 @@
-﻿namespace Tiles.V2.Write
+﻿namespace Tiles.V2.Read
 {
 
     using System;
@@ -7,7 +7,7 @@
 
     using Models;
 
-    public class Reader
+    public class LeftReader
     {
         private readonly string Signal;
 
@@ -38,7 +38,7 @@
         private Tile FifthZ1;
 
 
-        public Reader(string bitsRead, string signal, int totalBits)
+        public LeftReader(string bitsRead, string signal, int totalBits)
         {
             BitsRead  = bitsRead;
             Signal    = signal;
@@ -56,26 +56,26 @@
 
         private void Setup()
         {
-            FirstZ0  = Tile($"R: Z0-1st, B='{BitsRead}', S={Signal}");
-            SecondZ0 = Tile($"R: Z0-2nd, B='{BitsRead}1', S={Signal}");
-            ThirdZ0  = Tile($"R: Z0-3rd, B='{BitsRead}1', S={Signal}");
-            FourthZ0 = Tile($"R: Z0-4th, B='{BitsRead}1', S={Signal}");
+            FirstZ0  = Tile($"LR: Z0-1st, B='{BitsRead}', S={Signal}");
+            SecondZ0 = Tile($"LR: Z0-2nd, B='{BitsRead}1', S={Signal}");
+            ThirdZ0  = Tile($"LR: Z0-3rd, B='{BitsRead}1', S={Signal}");
+            FourthZ0 = Tile($"LR: Z0-4th, B='{BitsRead}1', S={Signal}");
 
 
-            FirstZ1  = Tile($"R: Z1-1st, B='{BitsRead}', S={Signal}");
-            SecondZ1 = Tile($"R: Z1-2nd, B='{BitsRead}0', S={Signal}");
-            ThirdZ1  = Tile($"R: Z1-3rd, B='{BitsRead}0', S={Signal}");
-            FourthZ1 = Tile($"R: Z1-4th, B='{BitsRead}0', S={Signal}");
-            FifthZ1  = Tile($"R: Z1-5th, B='{BitsRead}0', S={Signal}");
+            FirstZ1  = Tile($"LR: Z1-1st, B='{BitsRead}', S={Signal}");
+            SecondZ1 = Tile($"LR: Z1-2nd, B='{BitsRead}0', S={Signal}");
+            ThirdZ1  = Tile($"LR: Z1-3rd, B='{BitsRead}0', S={Signal}");
+            FourthZ1 = Tile($"LR: Z1-4th, B='{BitsRead}0', S={Signal}");
+            FifthZ1  = Tile($"LR: Z1-5th, B='{BitsRead}0', S={Signal}");
 
             tiles = new List<Tile> {FirstZ0, SecondZ0, ThirdZ0, FourthZ0, FirstZ1, SecondZ1, ThirdZ1, FourthZ1, FifthZ1};
 
             if (BitsRead.Length == 0)
             {
-                FirstZ0.East = Glues.Reader(Signal);
+                FirstZ1.West = Glues.Reader(Signal);
             } else
             {
-                FirstZ0.South = new Glue($"ReadContinue: {BitsRead}, S={Signal}");
+                FirstZ0.South = new Glue($"LR: ReadContinue: {BitsRead}, S={Signal}");
             }
 
             FirstZ0.North  = Bind(FirstZ0, SecondZ0);
@@ -107,46 +107,17 @@
             // final bit
             if (BitsRead.Length + 1 == TotalBits)
             {
-                FourthZ0.North = new Glue($"ReadContinue: {BitsRead}1, S={Signal}");
-                FifthZ1.North  = new Glue($"ReadContinue: {BitsRead}0, S={Signal}");
                 var currentValueForFifthZ1  = $"{BitsRead}0";
                 var currentValueForFourthZ0 = $"{BitsRead}1";
-
-                var possibleToIncrement = BitsRead.Contains("0");
-                var currentCarrySignal  = Signal == Signals.Carry;
-
-                if (currentCarrySignal)
-                {
-
-                    if (possibleToIncrement)
-                    {
-                        var valueToCreateFifthZ1 = IncrementInBinary(currentValueForFifthZ1);
-                        FifthZ1.North = Glues.Hook(valueToCreateFifthZ1, Signals.NoCarry);
-                        FifthZ1.Color = "red";
-
-                        var valueToCreateFourthZ0 = IncrementInBinary(currentValueForFourthZ0);
-                        FourthZ0.North = Glues.Hook(valueToCreateFourthZ0, Signals.NoCarry);
-
-                    } else
-                    {
-                        var allZeros = string.Concat(Enumerable.Repeat("0", TotalBits));
-                        FourthZ0.North = Glues.Hook(allZeros, Signals.Carry);
-                        FifthZ1.North  = Glues.Hook(allZeros, Signals.Carry);
-                        
-                    }
-
-
-                } else
-                {
-                    FourthZ0.North = Glues.Hook(currentValueForFourthZ0, Signals.NoCarry);
-                    FifthZ1.North  = Glues.Hook(currentValueForFifthZ1,  Signals.NoCarry);
-                }
-
+                
+                FourthZ0.North = Glues.IncrementStopper(currentValueForFourthZ0, Signal);
+                FifthZ1.North  = Glues.IncrementStopper(currentValueForFifthZ1,  Signal);
+                FifthZ1.Color = "red";
 
             } else
             {
-                FourthZ0.North = new Glue($"ReadContinue: {BitsRead}1, S={Signal}");
-                FifthZ1.North  = new Glue($"ReadContinue: {BitsRead}0, S={Signal}");
+                FourthZ0.North = new Glue($"LR: ReadContinue: {BitsRead}1, S={Signal}");
+                FifthZ1.North  = new Glue($"LR: ReadContinue: {BitsRead}0, S={Signal}");
             }
         }
 

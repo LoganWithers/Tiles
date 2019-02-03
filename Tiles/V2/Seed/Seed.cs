@@ -171,7 +171,7 @@
 
             for (var i = 0; i < bitsPerDigit; i++)
             {
-                var zero = new ZeroBit(binary, i, $"Seed {offset}, Bit {i} ");
+                var zero = new ZeroBit(binary, i, $"Seed {offset}, Bit {i}", signal: "Seed");
 
                 var tilesZ = zero.Tiles().ToList();
 
@@ -185,7 +185,7 @@
             }
 
 
-            var hook = new Hook($"Seed {offset}, Hook", height - 1, true) {
+            var hook = new RightHook($"Seed {offset}, Hook", height - 1, true) {
                 NorthGlue = new Glue(id.ToString())
             };
 

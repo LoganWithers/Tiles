@@ -40,7 +40,7 @@
             {
                 
                 var value = binaryValue[i];
-                var bit   = value == '0' ? (AbstractBit)new ZeroBit(binaryValue, i, Modes.Copy, carry) : new OneBit(binaryValue, i, Modes.Copy, carry);
+                var bit   = value == '0' ? (AbstractBit)new ZeroBit(binaryValue, i, Modes.Copy, signal) : new OneBit(binaryValue, i, Modes.Copy, signal);
 
 
                 // the first tile needs to bind with the hook, according to this binary string's data
