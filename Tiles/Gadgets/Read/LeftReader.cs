@@ -39,7 +39,6 @@
 
         public LeftReader(string bitsRead, string signal, int totalBits)
         {
-            Console.WriteLine($"Bits: {bitsRead}");
             this.bitsRead  = bitsRead;
             this.signal    = signal;
             this.totalBits = totalBits;
@@ -76,7 +75,6 @@
             } else
             {
                 firstZ0.South = new Glue($"LR: ReadContinue: {bitsRead}, S={signal}");
-                Console.WriteLine($"BitsRead: {bitsRead}, next label: {firstZ0.South.Label}");
             }
             firstZ0.North  = Bind(firstZ0, secondZ0);
             secondZ0.South = firstZ0.North;
@@ -112,8 +110,7 @@
                 
                 fourthZ0.North = GlueFactory.IncrementStopper(currentValueForFourthZ0, signal);
                 fifthZ1.North  = GlueFactory.IncrementStopper(currentValueForFifthZ1,  signal);
-                Console.WriteLine();
-
+ 
             } else
             {
                 fourthZ0.North = new Glue($"LR: ReadContinue: 1{bitsRead}, S={signal}");

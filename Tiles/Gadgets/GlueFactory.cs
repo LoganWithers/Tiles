@@ -28,7 +28,6 @@
 
         public static Glue PreReadRight(string signal) => new Glue($"PreReadRight: S={signal}");
 
-
         public static Glue PreReadLeft(string signal) => new Glue($"PreReadLeft: S={signal}");
         public static Glue RightTurn() => new Glue("RightTurn: S=Nth");
 

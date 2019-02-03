@@ -26,11 +26,13 @@
         /// </summary>
         private readonly int digits;
 
+        private readonly List<string> StartingValues;
+
         public Seed(CounterSettings settings)
         {
             height = settings.BitsRequiredToEncodeUpToBaseValueInBinary * 4 + 1;
-            digits = settings.HorizontalDigitsPerRow;
-
+            digits = settings.BinaryStringsForSeed.Count;
+            StartingValues = settings.BinaryStringsForSeed;
             SetUp();
 
             Start = Tiles.First();
@@ -122,7 +124,7 @@
 
             for (var i = 0; i < digits; i++)
             {
-                var digit = CreateDigits(i);
+                var digit = CreateDigits(i, StartingValues[i]);
 
                 if (i == 0)
                 {
@@ -142,7 +144,7 @@
             }
         }
 
-        private List<Tile> CreateDigits(int offset)
+        private List<Tile> CreateDigits(int offset, string value)
         {
             var bitsPerDigit = (height - 1) / 4;
 
@@ -169,11 +171,13 @@
 
             var bits = new List<Tile>();
 
-            for (var i = 0; i < bitsPerDigit; i++)
+            for (var i = 0; i < value.Length; i++)
             {
-                var zero = new ZeroBit(binary, i, $"Seed {offset}, Bit {i}", signal: "Seed");
 
-                var tilesZ = zero.Tiles().ToList();
+                var bit = value[i] == '0' ? (AbstractBit) new ZeroBit(binary, i, $"Seed {offset}, Bit {i}", "Seed") : 
+                                                           new OneBit(binary, i, $"Seed {offset}, Bit {i}", "Seed");
+
+                var tilesZ = bit.Tiles().ToList();
 
                 tilesZ.Last().South = new Glue(id.ToString());
 
@@ -189,12 +193,19 @@
                 NorthGlue = new Glue(id.ToString())
             };
 
-
             var hooktiles = hook.Tiles();
+
             hook.AttachTop(new Glue(id.ToString()));
             hook.AttachEast(new Glue($"Seed {offset}"));
             var hookTiles = hooktiles.ToList();
-            
+
+            foreach (var t in hookTiles)
+            {
+                if (t.Name.Contains("HookBottom"))
+                {
+                    t.South = new Glue();
+                }
+            }
             hookTiles.RemoveAt(0);
 
             var tileToConcat   = hookTiles.FirstOrDefault(t => t.South is null);

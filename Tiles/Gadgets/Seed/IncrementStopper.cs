@@ -21,15 +21,10 @@
 
         public IncrementStopper(string binaryString, string signal)
         {
-            this.signal      = signal;
+            this.signal = signal;
             binaryValue = binaryString;
-            isFirst = signal == Signals.First;
+            isFirst     = signal == Signals.First;
 
-            if (!isFirst)
-            {
-                Console.WriteLine($"IncrementStopper: {binaryString}");
-
-            }
             SetUp();
         }
 

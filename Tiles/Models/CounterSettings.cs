@@ -18,6 +18,11 @@
         public string LastRowInBaseK { get; }
         public int LowestPowerOfTwoGreaterThanBaseK { get; }
 
+
+        public long BestSeed;
+        public string EncodedInBaseKBestSeed;
+
+        public readonly List<string> BinaryStringsForSeed;
         public CounterSettings(int baseK, long stoppingValue = 10)
         {
             BaseK                                      = baseK;
@@ -29,6 +34,20 @@
             BinaryDigitPatterns                        = CreateVerticalBitPatterns();
             LowestPowerOfTwoGreaterThanBaseK           = Convert.ToInt32(Math.Ceiling(Log2(BaseK)));
 
+            BestSeed = Convert.ToInt32(Math.Pow(BaseK, LastRowInBaseK.Length) - 1 - stoppingValue);
+            EncodedInBaseKBestSeed = BestSeed.ConvertToBase(BaseK);
+            BinaryStringsForSeed = new List<string>();
+
+            Console.WriteLine($"Closest value before next overflow: {Math.Pow(BaseK, LastRowInBaseK.Length) - 1}\n");
+            Console.WriteLine($"Best seed in base {baseK}: {EncodedInBaseKBestSeed}\n");
+
+            foreach (var letter in EncodedInBaseKBestSeed)
+            {
+                var digit = letter - '0';
+
+                BinaryStringsForSeed.Add(Convert.ToString(digit, 2).PadLeft(BitsRequiredToEncodeUpToBaseValueInBinary, '0'));
+            }
+            Console.WriteLine(string.Join(", ", BinaryStringsForSeed));
         }
 
 

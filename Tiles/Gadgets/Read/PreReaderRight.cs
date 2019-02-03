@@ -17,7 +17,6 @@
         public IEnumerable<Tile> Tiles => tiles;
 
 
-        private int stoppingValue;
         private readonly string signal;
         public PreReaderRight(CounterSettings settings, bool carry)
         {

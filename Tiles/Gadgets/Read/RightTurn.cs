@@ -42,7 +42,6 @@
             middleBottom.West  = Bind(middleBottom, leftBottom);
             leftBottom.East    = middleBottom.West;
 
-
             leftBottom.North = Bind(leftBottom, leftMiddle);
             leftMiddle.South = leftBottom.North;
 

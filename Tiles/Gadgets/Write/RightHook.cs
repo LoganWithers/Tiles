@@ -15,36 +15,36 @@
 
         private List<Tile> tiles;
 
-        private readonly int Height;
+        private readonly int height;
 
-        private Tile HookBottomLeftUpperZ0;
+        private Tile hookBottomLeftUpperZ0;
 
-        private Tile HookBottomLeftUpperZ1;
+        private Tile hookBottomLeftUpperZ1;
 
-        private Tile HookBottomMiddleUpperZ0;
+        private Tile hookBottomMiddleUpperZ0;
 
-        private Tile HookBottomMiddleUpperZ1;
+        private Tile hookBottomMiddleUpperZ1;
 
-        private Tile HookBottomRightLowerZ0;
+        private Tile hookBottomRightLowerZ0;
 
-        private Tile HookBottomRightUpperZ0;
+        private Tile hookBottomRightUpperZ0;
 
-        private Tile HookBottomRightUpperZ1;
+        private Tile hookBottomRightUpperZ1;
 
-        private Tile HookTopLeftZ0;
+        private Tile hookTopLeftZ0;
 
-        private Tile HookTopLeftZ1;
+        private Tile hookTopLeftZ1;
 
-        private Tile HookTopMiddleLeftZ1;
+        private Tile hookTopMiddleLeftZ1;
 
-        private Tile HookTopMiddleRightZ1;
+        private Tile hookTopMiddleRightZ1;
 
-        private Tile HookTopRightZ1;
+        private Tile hookTopRightZ1;
 
 
         public RightHook(string binaryStringValue, int height, bool carry)
         {
-            Height                 = height;
+            this.height                 = height;
             this.binaryStringValue = binaryStringValue;
             signal                 = carry ? Signals.Carry : Signals.NoCarry;
             NorthGlue              = GlueFactory.Writer(binaryStringValue, signal);
@@ -66,13 +66,13 @@
 
         public void AttachTop(Glue glue)
         {
-            HookTopLeftZ0.South = glue;
+            hookTopLeftZ0.South = glue;
         }
 
 
         public void AttachEast(Glue glue)
         {
-            HookBottomRightUpperZ0.East = glue;
+            hookBottomRightUpperZ0.East = glue;
         }
 
         private string Content      => $"V={binaryStringValue}, I=Hook, S={signal}";
@@ -88,70 +88,71 @@
         private void InitDefaultCommonTiles()
         {
 
-            HookBottomRightLowerZ0  = Tile(TileNames.HookBottomRightLowerZ0);
-            HookBottomRightUpperZ0  = Tile(TileNames.HookBottomRightUpperZ0);
-            HookBottomMiddleUpperZ0 = Tile(TileNames.HookBottomMiddleUpperZ0);
-            HookBottomLeftUpperZ0   = Tile(TileNames.HookBottomLeftUpperZ0);
-            HookBottomLeftUpperZ1   = Tile(TileNames.HookBottomLeftUpperZ1);
-            HookBottomMiddleUpperZ1 = Tile(TileNames.HookBottomMiddleUpperZ1);
-            HookBottomRightUpperZ1  = Tile(TileNames.HookBottomRightUpperZ1);
-            HookTopRightZ1          = Tile(TileNames.HookTopRightZ1);
-            HookTopMiddleRightZ1    = Tile(TileNames.HookTopMiddleRightZ1);
-            HookTopMiddleLeftZ1     = Tile(TileNames.HookTopMiddleLeftZ1);
-            HookTopLeftZ1           = Tile(TileNames.HookTopLeftZ1);
-            HookTopLeftZ0           = Tile(TileNames.HookTopLeftZ0);
+            hookBottomRightLowerZ0  = Tile(TileNames.HookBottomRightLowerZ0);
+            hookBottomRightUpperZ0  = Tile(TileNames.HookBottomRightUpperZ0);
+            hookBottomMiddleUpperZ0 = Tile(TileNames.HookBottomMiddleUpperZ0);
+            hookBottomLeftUpperZ0   = Tile(TileNames.HookBottomLeftUpperZ0);
+            hookBottomLeftUpperZ1   = Tile(TileNames.HookBottomLeftUpperZ1);
+            hookBottomMiddleUpperZ1 = Tile(TileNames.HookBottomMiddleUpperZ1);
+            hookBottomRightUpperZ1  = Tile(TileNames.HookBottomRightUpperZ1);
+            hookTopRightZ1          = Tile(TileNames.HookTopRightZ1);
+            hookTopMiddleRightZ1    = Tile(TileNames.HookTopMiddleRightZ1);
+            hookTopMiddleLeftZ1     = Tile(TileNames.HookTopMiddleLeftZ1);
+            hookTopLeftZ1           = Tile(TileNames.HookTopLeftZ1);
+            hookTopLeftZ0           = Tile(TileNames.HookTopLeftZ0);
 
             tiles = new List<Tile>{
-                HookBottomRightLowerZ0,
-                HookBottomRightUpperZ0,
-                HookBottomMiddleUpperZ0,
-                HookBottomLeftUpperZ0,
-                HookBottomLeftUpperZ1,
-                HookBottomMiddleUpperZ1,
-                HookBottomRightUpperZ1,
-                HookTopRightZ1,
-                HookTopMiddleRightZ1,
-                HookTopMiddleLeftZ1,
-                HookTopLeftZ1,
-                HookTopLeftZ0
+                hookBottomRightLowerZ0,
+                hookBottomRightUpperZ0,
+                hookBottomMiddleUpperZ0,
+                hookBottomLeftUpperZ0,
+                hookBottomLeftUpperZ1,
+                hookBottomMiddleUpperZ1,
+                hookBottomRightUpperZ1,
+                hookTopRightZ1,
+                hookTopMiddleRightZ1,
+                hookTopMiddleLeftZ1,
+                hookTopLeftZ1,
+                hookTopLeftZ0
             };
 
-            HookBottomRightLowerZ0.South = SouthGlue; 
-            HookBottomRightLowerZ0.North = Bind(HookBottomRightLowerZ0, HookBottomRightUpperZ0);
-            HookBottomRightUpperZ0.South = HookBottomRightLowerZ0.North;
+            hookBottomRightLowerZ0.South = SouthGlue; 
+            hookBottomRightLowerZ0.North = Bind(hookBottomRightLowerZ0, hookBottomRightUpperZ0);
+            hookBottomRightUpperZ0.South = hookBottomRightLowerZ0.North;
 
-            HookBottomRightUpperZ0.West  = Bind(HookBottomRightUpperZ0, HookBottomMiddleUpperZ0);
-            HookBottomMiddleUpperZ0.East = HookBottomRightUpperZ0.West;
+            hookBottomRightUpperZ0.West  = Bind(hookBottomRightUpperZ0, hookBottomMiddleUpperZ0);
+            hookBottomMiddleUpperZ0.East = hookBottomRightUpperZ0.West;
 
-            HookBottomMiddleUpperZ0.West = Bind(HookBottomMiddleUpperZ0, HookBottomLeftUpperZ0);
-            HookBottomLeftUpperZ0.East   = HookBottomMiddleUpperZ0.West;
+            hookBottomMiddleUpperZ0.West = Bind(hookBottomMiddleUpperZ0, hookBottomLeftUpperZ0);
+            hookBottomLeftUpperZ0.East   = hookBottomMiddleUpperZ0.West;
 
-            HookBottomLeftUpperZ0.Up     = Bind(HookBottomLeftUpperZ0, HookBottomLeftUpperZ1);
-            HookBottomLeftUpperZ1.Down   = HookBottomLeftUpperZ0.Up;
+            hookBottomLeftUpperZ0.Up     = Bind(hookBottomLeftUpperZ0, hookBottomLeftUpperZ1);
+            hookBottomLeftUpperZ1.Down   = hookBottomLeftUpperZ0.Up;
 
-            HookBottomLeftUpperZ1.East   = Bind(HookBottomLeftUpperZ1, HookBottomMiddleUpperZ1);
-            HookBottomMiddleUpperZ1.West = HookBottomLeftUpperZ1.East;
+            hookBottomLeftUpperZ1.East   = Bind(hookBottomLeftUpperZ1, hookBottomMiddleUpperZ1);
+            hookBottomMiddleUpperZ1.West = hookBottomLeftUpperZ1.East;
 
-            HookBottomMiddleUpperZ1.East = Bind(HookBottomMiddleUpperZ1, HookBottomRightUpperZ1);
-            HookBottomRightUpperZ1.West  = HookBottomMiddleUpperZ1.East;
+            hookBottomMiddleUpperZ1.East = Bind(hookBottomMiddleUpperZ1, hookBottomRightUpperZ1);
+            hookBottomRightUpperZ1.West  = hookBottomMiddleUpperZ1.East;
 
-            HookTopRightZ1.West          = Bind(HookTopRightZ1, HookTopMiddleRightZ1);
-            HookTopMiddleRightZ1.East    = HookTopRightZ1.West;
+            hookTopRightZ1.West          = Bind(hookTopRightZ1, hookTopMiddleRightZ1);
+            hookTopMiddleRightZ1.East    = hookTopRightZ1.West;
                                          
-            HookTopMiddleRightZ1.West    = Bind(HookTopMiddleRightZ1, HookTopMiddleLeftZ1);
-            HookTopMiddleLeftZ1.East     = HookTopMiddleRightZ1.West;
+            hookTopMiddleRightZ1.West    = Bind(hookTopMiddleRightZ1, hookTopMiddleLeftZ1);
+
+            hookTopMiddleLeftZ1.East     = hookTopMiddleRightZ1.West;
                                          
-            HookTopMiddleLeftZ1.West     = Bind(HookTopMiddleLeftZ1, HookTopLeftZ1);
-            HookTopLeftZ1.East           = HookTopMiddleLeftZ1.West;
+            hookTopMiddleLeftZ1.West     = Bind(hookTopMiddleLeftZ1, hookTopLeftZ1);
+            hookTopLeftZ1.East           = hookTopMiddleLeftZ1.West;
                                          
-            HookTopLeftZ1.Down           = Bind(HookTopLeftZ1, HookTopLeftZ0);
-            HookTopLeftZ0.Up             = HookTopLeftZ1.Down;
-            HookTopLeftZ0.South          = NorthGlue;
+            hookTopLeftZ1.Down           = Bind(hookTopLeftZ1, hookTopLeftZ0);
+            hookTopLeftZ0.Up             = hookTopLeftZ1.Down;
+            hookTopLeftZ0.South          = NorthGlue;
 
             var previous = Guid.NewGuid();
-            HookBottomRightUpperZ1.North = new Glue(previous.ToString());
+            hookBottomRightUpperZ1.North = new Glue(previous.ToString());
 
-            for (var i = 0; i < Height; i++)
+            for (var i = 0; i < height; i++)
             {
                 var tile = Tile(Index(i));
                 tile.South = new Glue(previous.ToString());
@@ -161,16 +162,15 @@
                 tiles.Add(tile);
             }
 
-            HookTopRightZ1.South  = new Glue(previous.ToString());
+            hookTopRightZ1.South  = new Glue(previous.ToString());
 
         }
 
 
+        private Glue Bind(Tile tileA, Tile tileB) => new Glue($"{tileA.Name} -> {tileB.Name} {signal}");
 
-        protected Glue Bind(Tile tileA, Tile tileB) => new Glue($"{tileA.Name} -> {tileB.Name} {signal}");
 
-
-        protected Tile Tile(string name) => new Tile($"{name}, {Content}");
+        private Tile Tile(string name) => new Tile($"{name}, {Content}");
 
     }
 
